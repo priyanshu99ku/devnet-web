@@ -52,7 +52,7 @@ const FeedPage = () => {
   const currentCard = feed[currentCardIndex];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-base-200 py-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-base-300 py-6">
       <h1 className="text-3xl font-bold mb-8">Discover Users</h1>
       <div className="w-80 h-[450px] relative">
         {currentCard && (

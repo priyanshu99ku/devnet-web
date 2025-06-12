@@ -9,7 +9,7 @@ function Login() {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showSignInPopup, setShowSignInPopup] = useState(false);
   const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
@@ -58,96 +58,96 @@ function Login() {
     setErrorMessage("");
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
+  const handleRightSwipeClick = () => {
+    setShowSignInPopup(true);
   };
 
   return (
-    <div className="flex justify-center items-center py-16">
-      <form
-        onSubmit={handleLogin}
-        className="w-full max-w-md p-10 bg-blue-950 text-white rounded-lg bg-opacity-80"
-        style={{ minWidth: 320 }}
-      >
-        <h1 className="font-bold text-3xl py-4 my-4">{isSignInForm ? "Sign In" : "Sign up"}</h1>
-        {!isSignInForm && (
-          <input
-            ref={name}
-            type="text"
-            placeholder="Full Name"
-            className="p-2 my-2 w-full bg-gray-700 rounded"
-          />
-        )}
-        <input
-          ref={email}
-          type="text"
-          placeholder="Email address"
-          className="p-2 my-2 w-full bg-gray-700 rounded"
-        />
-        <div className="relative">
-          <input
-            ref={password}
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            className="p-2 my-2 w-full bg-gray-700 rounded"
-          />
-          <button
-            type="button"
-            onClick={togglePasswordVisibility}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-          >
-            {showPassword ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5 text-black"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3.98 8.622a8.773 8.773 0 0110.118-2.392c1.139.691 1.77 1.83 1.954 2.115l.394.593c.321.483.693.908 1.136 1.258C20.6 13.91 22.5 16.71 22.5 19.5c0 1.229-.297 2.404-.842 3.468M10.118 6.23c-1.487-.899-3.21-1.398-5.004-1.398h-.839L2.83 3.993m.17-2.181a1.272 1.272 0 00-1.848 1.547l1.012 1.519c.148.222.256.452.327.683.053.18.093.367.118.557m5.679 4.417c.56.012 1.108.068 1.638.161M12.986 4.773l1.532-2.3c.725-1.089 2.05-1.341 3.085-.688 1.036.653 1.229 1.988.455 3.076l-1.53 2.3c-.15.225-.262.457-.336.69"
-                />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5 text-black"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-            )}
-          </button>
-        </div>
-        {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-red-700 p-4 my-8 w-full rounded-lg hover:bg-red-800 transition-colors disabled:bg-red-900"
+    <div className="flex h-screen w-screen" style={{ backgroundImage: 'linear-gradient(to right, #c8e6c9,#ffffff,#c8e6c9)', transition: 'background-image 0.5s ease-in-out' }}>
+      {/* Left Section - Login Form */}
+      <div className="w-1/2 flex items-center justify-center p-8">
+        <form
+          onSubmit={handleLogin}
+          className="w-full max-w-md p-10 bg-black shadow-xl rounded-lg"
         >
-          {loading ? "Loading..." : (isSignInForm ? "Sign In" : "Sign up")}
-        </button>
-        <p className="py-4 cursor-pointer hover:underline" onClick={toggleSignInForm}>
-          {isSignInForm
-            ? "New to Devnet? Sign Up Now"
-            : "Already registered? Sign In Now.."}
+          <h1 className="font-bold text-3xl py-4 my-4 text-white">{isSignInForm ? "Sign In" : "Sign up"}</h1>
+          {!isSignInForm && (
+            <input
+              ref={name}
+              type="text"
+              placeholder="Full Name"
+              className="input input-bordered w-full my-2 bg-white text-gray-900 border-gray-300"
+            />
+          )}
+          <input
+            ref={email}
+            type="text"
+            placeholder="Email address"
+            className="input input-bordered w-full my-2 bg-white text-gray-900 border-gray-300"
+          />
+          <div className="relative">
+            <input
+              ref={password}
+              type="password"
+              placeholder="Password"
+              className="input input-bordered w-full my-2 bg-white text-gray-900 border-gray-300"
+            />
+          </div>
+          {errorMessage && <p className="text-sm text-red-500 mt-2">{errorMessage}</p>}
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn w-full mt-8 bg-violet-600 hover:bg-violet-700 border-violet-600"
+          >
+            {loading ? "Loading..." : (isSignInForm ? "Sign In" : "Sign up")}
+          </button>
+          <p className="py-4 cursor-pointer hover:underline text-center text-white" onClick={toggleSignInForm}>
+            {isSignInForm
+              ? "New to Devnet? Sign Up Now"
+              : "Already registered? Sign In Now.."}
+          </p>
+        </form>
+      </div>
+
+      {/* Vertical Separator */}
+      <div className="border-l border-gray-600 h-full"></div>
+
+      {/* Right Section - Marketing Text and Button */}
+      <div className="w-1/2 flex flex-col items-center justify-center p-8 text-center pl-16">
+        <h2 className="text-5xl font-bold mb-6 text-gray-900">Welcome to DevNet</h2>
+        <p className="text-xl font-semibold mb-4 text-gray-950">
+          Connect. Collaborate. Code.
         </p>
-      </form>
+        <p className="text-lg leading-relaxed max-w-md text-gray-600 mb-8">
+          Swipe right to find your next project
+          partner, mentor, teammate, or collaborator in your domain.
+          Join a network where passion meets purpose.
+          Let's build the future, one connection at a time.
+        </p>
+        <button
+          className="btn btn-lg btn-circle bg-green-500 hover:bg-green-600 text-white shadow-lg"
+          onClick={handleRightSwipeClick}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-10 h-10">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Popup Modal */}
+      {showSignInPopup && (
+        <dialog id="signIn_modal" className="modal modal-open">
+          <div className="modal-box text-center">
+            <h3 className="font-bold text-lg text-error">Please Sign In!</h3>
+            <p className="py-4">You need to be logged in to use this feature.</p>
+            <div className="modal-action">
+              <form method="dialog">
+                <button className="btn btn-primary" onClick={() => setShowSignInPopup(false)}>Close</button>
+              </form>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 }
