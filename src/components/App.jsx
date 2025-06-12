@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Body from "./Body";
 import Login from "./Login";
 import Profile from "./Profile";
+import Logout from "./Logout";
+import FeedPage from "./FeedPage";
 
 function App() {
   return (
@@ -11,7 +13,9 @@ function App() {
           <Route index element={<div>Home Page</div>} />
           <Route path="login" element={<Login />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="feed" element={<FeedPage />} />
         </Route>
+        <Route path="/logout" element={<Logout />} />
       </Routes>
     </BrowserRouter>
   );
