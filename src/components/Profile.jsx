@@ -19,13 +19,8 @@ function Profile() {
 
       try {
         setLoading(true);
-        // Assuming you have a /user endpoint to fetch user data
-        // You might need to send a token for authorization
-        const token = localStorage.getItem('token');
         const response = await axios.get(`${API_URL}/user`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          withCredentials: true
         });
         dispatch(setUser(response.data));
         setError(null);
