@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFeed, setLoading, setError } from '../utils/feedslice';
-import { logout } from '../utils/userSliece';
 import { FEED_API } from '../utils/constants';
 import axiosInstance from '../utils/axiosConfig';
 
 const FeedPage = () => {
   const dispatch = useDispatch();
   const { feed, loading, error } = useSelector((state) => state.feed);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
   useEffect(() => {
     const fetchFeed = async () => {
@@ -23,29 +23,77 @@ const FeedPage = () => {
     fetchFeed();
   }, [dispatch]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  const handleNextCard = () => {
+    setCurrentCardIndex((prevIndex) => (prevIndex + 1) % feed.length);
+  };
+
+  const handlePrevCard = () => {
+    setCurrentCardIndex((prevIndex) => (prevIndex - 1 + feed.length) % feed.length);
+  };
+
+  const handleInterested = () => {
+    // Implement your logic for 'interested' here
+    // For example, send a request to your backend
+    console.log('Interested in:', feed[currentCardIndex]);
+    handleNextCard();
+  };
+
+  const handleIgnore = () => {
+    // Implement your logic for 'ignore' here
+    // For example, send a request to your backend
+    console.log('Ignoring:', feed[currentCardIndex]);
+    handleNextCard();
+  };
+
+  if (loading) return <div className="text-center text-xl font-bold py-10">Loading Users...</div>;
+  if (error) return <div className="text-center text-red-500 text-xl font-bold py-10">Error: {error}</div>;
+  if (!feed || feed.length === 0) return <div className="text-center text-gray-500 text-xl font-bold py-10">No users to show.</div>;
+
+  const currentCard = feed[currentCardIndex];
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">User Feed</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {feed.map((item, index) => (
-          <div key={index} className="card card-side bg-base-100 shadow-sm">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-base-200 py-6">
+      <h1 className="text-3xl font-bold mb-8">Discover Users</h1>
+      <div className="w-80 h-[450px] relative">
+        {currentCard && (
+          <div key={currentCard.email} className="card w-full h-full bg-base-100 shadow-xl image-full">
             <figure>
               <img
-                src={item.imageUrl || "https://img.daisyui.com/images/stock/photo-1635805737707-53994a69daeb.webp"}
-                alt={`${item.firstName} ${item.lastName}`} />
+                src={currentCard.imageUrl || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
+                alt={`${currentCard.firstName} ${currentCard.lastName}`}
+                className="w-full h-full object-cover"
+              />
             </figure>
-            <div className="card-body">
-              <h2 className="card-title">{`${item.firstName} ${item.lastName}`}</h2>
-              <p>{item.email}</p>
-              <div className="card-actions justify-end">
-                <button className="btn btn-primary">Watch</button>
+            <div className="card-body p-6 flex flex-col justify-end text-white">
+              <h2 className="card-title text-3xl">{`${currentCard.firstName} ${currentCard.lastName}`}</h2>
+              <p className="text-lg">{currentCard.email}</p>
+              <div className="mt-2 mb-4">
+                <h3 className="font-semibold text-xl">About:</h3>
+                <p className="text-sm opacity-90">
+                  {currentCard.about || "No bio available. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
+                </p>
+              </div>
+              <div className="card-actions justify-center space-x-4 mt-auto">
+                <button 
+                  onClick={handleIgnore}
+                  className="btn btn-circle btn-lg text-red-500 hover:text-white bg-red-500/20 hover:bg-red-500 border-none"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+                <button 
+                  onClick={handleInterested}
+                  className="btn btn-circle btn-lg text-green-500 hover:text-white bg-green-500/20 hover:bg-green-500 border-none"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                </button>
               </div>
             </div>
           </div>
-        ))}
+        )}
+      </div>
+      <div className="flex justify-between w-80 mt-4">
+        <button onClick={handlePrevCard} className="btn btn-primary" disabled={feed.length <= 1}>Previous</button>
+        <button onClick={handleNextCard} className="btn btn-primary" disabled={feed.length <= 1}>Next</button>
       </div>
     </div>
   );
