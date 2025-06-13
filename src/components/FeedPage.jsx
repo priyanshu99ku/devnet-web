@@ -31,17 +31,15 @@ const FeedPage = () => {
     setCurrentCardIndex((prevIndex) => (prevIndex - 1 + feed.length) % feed.length);
   };
 
-  const handleInterested = () => {
-    // Implement your logic for 'interested' here
-    // For example, send a request to your backend
-    console.log('Interested in:', feed[currentCardIndex]);
-    handleNextCard();
-  };
-
-  const handleIgnore = () => {
-    // Implement your logic for 'ignore' here
-    // For example, send a request to your backend
-    console.log('Ignoring:', feed[currentCardIndex]);
+  const handleInterested = async () => {
+    const userId = feed[currentCardIndex]._id || feed[currentCardIndex].id;
+    try {
+      await axiosInstance.post(`${process.env.REACT_APP_API_URL || FEED_API.replace('/feed','')}/request/sendInterestedUser`, {
+        interestedUserId: userId
+      });
+    } catch (err) {
+      console.error('Error sending interested request:', err);
+    }
     handleNextCard();
   };
 
@@ -75,16 +73,10 @@ const FeedPage = () => {
               </div>
               <div className="card-actions justify-center space-x-4 mt-auto">
                 <button 
-                  onClick={handleIgnore}
-                  className="btn btn-circle btn-lg text-red-500 hover:text-white bg-red-500/20 hover:bg-red-500 border-none"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-                <button 
                   onClick={handleInterested}
-                  className="btn btn-circle btn-lg text-green-500 hover:text-white bg-green-500/20 hover:bg-green-500 border-none"
+                  className="btn btn-primary btn-lg"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                  Interested
                 </button>
               </div>
             </div>

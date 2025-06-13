@@ -49,19 +49,32 @@ function EditProfile() {
       age: age ? Number(age) : undefined,
       gender: gender || undefined,
       skills: updatedSkills,
+      userId: currentUser._id, // Add userId for backend validation
+      email: currentUser.email // Add email field
     };
 
     try {
-      const response = await axiosInstance.put(`${API_URL}/user/profile`, updatedProfile);
-      dispatch(setUser(response.data)); // Update Redux state with new user data
-      setSuccess("Profile updated successfully!");
-      // Optionally navigate back to profile page after a delay
-      setTimeout(() => {
-        navigate('/profile');
-      }, 1500);
+      const response = await axiosInstance.patch(`${API_URL}/profile/edit`, updatedProfile);
+      
+      if (response.data.success) {
+        dispatch(setUser(response.data.user)); // Update Redux state with new user data
+        setSuccess("Profile updated successfully!");
+        // Navigate back to profile page after a delay
+        setTimeout(() => {
+          navigate('/profile');
+        }, 1500);
+      }
     } catch (err) {
       console.error("Error updating profile:", err);
-      setError(err.response?.data?.message || "Failed to update profile.");
+      if (err.response?.data?.errors) {
+        // Handle validation errors
+        setError(err.response.data.errors.join(', '));
+      } else if (err.response?.data?.msg) {
+        // Handle other error messages
+        setError(err.response.data.msg);
+      } else {
+        setError("Failed to update profile. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

@@ -33,10 +33,10 @@ const NavBar = () => {
               <li>
                 <Link to="/profile" className="justify-between">
                   Profile
-                  <span className="badge">New</span>
+                  <span className="badge badge-sm badge-neutral">New</span>
                 </Link>
               </li>
-              <li><a>Settings</a></li>
+              <li><Link to="/connections">Connection Page</Link></li>
               <li><Link to="/feed">Feed page</Link></li>
               <li>
                 <Link to="/logout">Logout</Link>

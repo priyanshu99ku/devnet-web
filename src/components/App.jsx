@@ -8,6 +8,7 @@ import Profile from "./Profile";
 import Logout from "./Logout";
 import FeedPage from "./FeedPage";
 import EditProfile from "./EditProfile";
+import ConnectionPage from "./ConnectionPage";
 import axios from 'axios';
 import { API_URL } from '../utils/constants';
 
@@ -52,6 +53,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="edit-profile" element={<EditProfile />} />
           <Route path="feed" element={<FeedPage />} />
+          <Route path="connections" element={<ConnectionPage />} />
         </Route>
         <Route path="/logout" element={<Logout />} />
       </Routes>
