@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFeed, setLoading, setError } from '../utils/feedslice';
-import { FEED_API } from '../utils/constants';
+import { FEED_API, API_URL } from '../utils/constants';
 import axiosInstance from '../utils/axiosConfig';
 
 const FeedPage = () => {
   const dispatch = useDispatch();
   const { feed, loading, error } = useSelector((state) => state.feed);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [errorState, setErrorState] = useState(null);
+  const [interestedDisabled, setInterestedDisabled] = useState(false);
 
   useEffect(() => {
     const fetchFeed = async () => {
@@ -23,6 +25,10 @@ const FeedPage = () => {
     fetchFeed();
   }, [dispatch]);
 
+  useEffect(() => {
+    setInterestedDisabled(false);
+  }, [currentCardIndex]);
+
   const handleNextCard = () => {
     setCurrentCardIndex((prevIndex) => (prevIndex + 1) % feed.length);
   };
@@ -33,14 +39,18 @@ const FeedPage = () => {
 
   const handleInterested = async () => {
     const userId = feed[currentCardIndex]._id || feed[currentCardIndex].id;
+    setInterestedDisabled(true);
+    console.log('Sending interested request for userId:', userId);
     try {
-      await axiosInstance.post(`${process.env.REACT_APP_API_URL || FEED_API.replace('/feed','')}/request/sendInterestedUser`, {
+      const response = await axiosInstance.post(`${API_URL}/request/sendInterestedUser`, {
         interestedUserId: userId
       });
+      console.log('Interested API response:', response);
+      setErrorState(null);
     } catch (err) {
-      console.error('Error sending interested request:', err);
+      console.error('Error sending interested request:', err, err.response);
+      setErrorState(err.response?.data?.message || err.message || 'Failed to send interested request.');
     }
-    handleNextCard();
   };
 
   if (loading) return <div className="text-center text-xl font-bold py-10">Loading Users...</div>;
@@ -75,6 +85,7 @@ const FeedPage = () => {
                 <button 
                   onClick={handleInterested}
                   className="btn btn-primary btn-lg"
+                  disabled={interestedDisabled}
                 >
                   Interested
                 </button>

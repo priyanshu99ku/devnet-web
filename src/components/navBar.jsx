@@ -38,6 +38,7 @@ const NavBar = () => {
               </li>
               <li><Link to="/connections">Connection Page</Link></li>
               <li><Link to="/feed">Feed page</Link></li>
+              <li><Link to="/received-requests">Request Feed</Link></li>
               <li>
                 <Link to="/logout">Logout</Link>
               </li>

@@ -1,28 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../utils/axiosConfig';
 import { API_URL } from '../utils/constants';
+import { useSelector, useDispatch } from 'react-redux';
+import { setConnections } from '../utils/feedslice';
 
 const ConnectionPage = () => {
-  const [connections, setConnections] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const connections = useSelector((state) => state.feed.connections);
+  const [loading, setLoading] = useState(connections.length === 0);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchConnections = async () => {
-      try {
-        const response = await axiosInstance.get(`${API_URL}/request/all-connections`);
-        // The backend returns { message: ..., users: [...] }
-        const data = response.data.users || [];
-        setConnections(data);
-      } catch (err) {
-        console.error('Error fetching connections:', err, err.response);
-        setError(err.response?.data?.message || err.response?.data?.msg || 'Failed to fetch connections');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchConnections();
-  }, []);
+    if (connections.length === 0) {
+      const fetchConnections = async () => {
+        try {
+          const response = await axiosInstance.get(`${API_URL}/request/all-connections`);
+          const data = response.data.users || [];
+          dispatch(setConnections(data));
+        } catch (err) {
+          setError(err.response?.data?.message || err.response?.data?.msg || 'Failed to fetch connections');
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchConnections();
+    } else {
+      setLoading(false);
+    }
+  }, [connections, dispatch]);
 
   if (loading) {
     return (
