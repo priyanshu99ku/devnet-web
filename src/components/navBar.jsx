@@ -28,19 +28,25 @@ const NavBar = () => {
             </div>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content bg-white text-base-content rounded-box z-1 mt-3 w-52 p-2 shadow"
+              className="menu menu-sm dropdown-content bg-white text-base-content rounded-xl z-10 mt-3 w-56 p-3 shadow-lg border border-gray-200"
             >
               <li>
-                <Link to="/profile" className="justify-between">
+                <Link to="/profile" className="px-3 py-2 rounded-lg hover:bg-blue-100 font-medium transition-colors">
                   Profile
-                  <span className="badge badge-sm badge-neutral">New</span>
                 </Link>
               </li>
-              <li><Link to="/connections">Connection Page</Link></li>
-              <li><Link to="/feed">Feed page</Link></li>
-              <li><Link to="/received-requests">Request Feed</Link></li>
               <li>
-                <Link to="/logout">Logout</Link>
+                <Link to="/connections" className="px-3 py-2 rounded-lg hover:bg-blue-100 font-medium transition-colors">Connection Page</Link>
+              </li>
+              <li>
+                <Link to="/feed" className="px-3 py-2 rounded-lg hover:bg-blue-100 font-medium transition-colors">Feed page</Link>
+              </li>
+              <li>
+                <Link to="/received-requests" className="px-3 py-2 rounded-lg hover:bg-blue-100 font-medium transition-colors">Request Feed</Link>
+              </li>
+              <div className="my-2 border-t border-gray-200"></div>
+              <li>
+                <Link to="/logout" className="px-3 py-2 rounded-lg hover:bg-red-100 text-red-600 font-medium transition-colors">Logout</Link>
               </li>
             </ul>
           </div>

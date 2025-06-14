@@ -14,12 +14,11 @@ const ReceivedRequests = () => {
     dispatch(fetchReceivedRequests());
   }, [dispatch]);
 
-  const handleAccept = async (requestId) => {
+  const handleAccept = async (connectionId) => {
     try {
-      setProcessingRequest(requestId);
+      setProcessingRequest(connectionId);
       setActionError(null);
-      await axiosInstance.post(`${API_URL}/request/accept/${requestId}`);
-      // Refresh the requests list after accepting
+      const response = await axiosInstance.post(`${API_URL}/request/review/accepted/${connectionId}`);
       dispatch(fetchReceivedRequests());
     } catch (err) {
       setActionError(err.response?.data?.message || 'Failed to accept request');
@@ -28,12 +27,11 @@ const ReceivedRequests = () => {
     }
   };
 
-  const handleReject = async (requestId) => {
+  const handleReject = async (connectionId) => {
     try {
-      setProcessingRequest(requestId);
+      setProcessingRequest(connectionId);
       setActionError(null);
-      await axiosInstance.post(`${API_URL}/request/reject/${requestId}`);
-      // Refresh the requests list after rejecting
+      await axiosInstance.post(`${API_URL}/request/review/rejected/${connectionId}`);
       dispatch(fetchReceivedRequests());
     } catch (err) {
       setActionError(err.response?.data?.message || 'Failed to reject request');
@@ -93,21 +91,21 @@ const ReceivedRequests = () => {
                 <div className="flex gap-2">
                   <button
                     className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors ${
-                      processingRequest === request._id ? 'opacity-50 cursor-not-allowed' : ''
+                      processingRequest === request.connectionId ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
-                    onClick={() => handleAccept(request._id)}
-                    disabled={processingRequest === request._id}
+                    onClick={() => handleAccept(request.connectionId)}
+                    disabled={processingRequest === request.connectionId}
                   >
-                    {processingRequest === request._id ? 'Processing...' : 'Accept'}
+                    {processingRequest === request.connectionId ? 'Processing...' : 'Accept'}
                   </button>
                   <button
                     className={`bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors ${
-                      processingRequest === request._id ? 'opacity-50 cursor-not-allowed' : ''
+                      processingRequest === request.connectionId ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
-                    onClick={() => handleReject(request._id)}
-                    disabled={processingRequest === request._id}
+                    onClick={() => handleReject(request.connectionId)}
+                    disabled={processingRequest === request.connectionId}
                   >
-                    {processingRequest === request._id ? 'Processing...' : 'Reject'}
+                    {processingRequest === request.connectionId ? 'Processing...' : 'Reject'}
                   </button>
                 </div>
               </div>

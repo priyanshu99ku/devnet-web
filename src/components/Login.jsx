@@ -13,6 +13,8 @@ function Login() {
   const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
+  const firstName = useRef(null);
+  const lastName = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -22,32 +24,55 @@ function Login() {
     setErrorMessage("");
 
     // Simple validation
-    if (!email.current.value || !password.current.value || (!isSignInForm && !name.current.value)) {
+    if (!email.current.value || !password.current.value || (!isSignInForm && (!firstName.current.value || !lastName.current.value))) {
       setErrorMessage("Please fill all required fields.");
       setLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
-        email: email.current.value,
-        password: password.current.value,
-      }, {
-        withCredentials: true
-      });
+      if (isSignInForm) {
+        // LOGIN
+        const response = await axios.post(`${API_URL}/auth/login`, {
+          email: email.current.value,
+          password: password.current.value,
+        }, {
+          withCredentials: true
+        });
 
-      if (response.data && response.data.token && response.data.user) {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        dispatch(setUser(response.data.user));
-        dispatch(setToken(response.data.token));
-        navigate("/");
+        if (response.data && response.data.token && response.data.user) {
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+          dispatch(setUser(response.data.user));
+          dispatch(setToken(response.data.token));
+          navigate("/profile");
+        } else {
+          setErrorMessage("Unexpected response from server. Please try again.");
+        }
       } else {
-        setErrorMessage("Unexpected response from server. Please try again.");
+        // SIGNUP
+        const signupResponse = await axios.post(`${API_URL}/auth/signup`, {
+          firstName: firstName.current.value,
+          lastName: lastName.current.value,
+          email: email.current.value,
+          password: password.current.value,
+        }, {
+          withCredentials: true
+        });
+        // After successful signup, log the user in automatically
+        if (signupResponse.data && signupResponse.data.token && signupResponse.data.user) {
+          localStorage.setItem("token", signupResponse.data.token);
+          localStorage.setItem("user", JSON.stringify(signupResponse.data.user));
+          dispatch(setUser(signupResponse.data.user));
+          dispatch(setToken(signupResponse.data.token));
+          navigate("/profile");
+        } else {
+          setErrorMessage("Signup failed. Please try again.");
+        }
       }
     } catch (error) {
-      console.error("Login API Error:", error.response);
-      setErrorMessage(error.response?.data?.message || "Invalid email or password. Please try again.");
+      console.error("Auth API Error:", error.response);
+      setErrorMessage(error.response?.data?.message || (isSignInForm ? "Invalid email or password. Please try again." : "Signup failed. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -72,12 +97,20 @@ function Login() {
         >
           <h1 className="font-bold text-3xl py-4 my-4 text-white">{isSignInForm ? "Sign In" : "Sign up"}</h1>
           {!isSignInForm && (
-            <input
-              ref={name}
-              type="text"
-              placeholder="Full Name"
-              className="input input-bordered w-full my-2 bg-white text-gray-900 border-gray-300"
-            />
+            <>
+              <input
+                ref={firstName}
+                type="text"
+                placeholder="First Name"
+                className="input input-bordered w-full my-2 bg-white text-gray-900 border-gray-300"
+              />
+              <input
+                ref={lastName}
+                type="text"
+                placeholder="Last Name"
+                className="input input-bordered w-full my-2 bg-white text-gray-900 border-gray-300"
+              />
+            </>
           )}
           <input
             ref={email}

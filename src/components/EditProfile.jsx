@@ -54,7 +54,9 @@ function EditProfile() {
     };
 
     try {
-      const response = await axiosInstance.patch(`${API_URL}/profile/edit`, updatedProfile);
+      const response = await axiosInstance.patch(`${API_URL}/profile/edit`, updatedProfile, {
+        withCredentials: true
+      });
       
       if (response.data.success) {
         dispatch(setUser(response.data.user)); // Update Redux state with new user data

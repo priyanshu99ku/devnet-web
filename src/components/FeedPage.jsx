@@ -60,37 +60,30 @@ const FeedPage = () => {
   const currentCard = feed[currentCardIndex];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-base-300 py-6">
-      <h1 className="text-3xl font-bold mb-8">Discover Users</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen py-6">
       <div className="w-80 h-[450px] relative">
         {currentCard && (
-          <div key={currentCard.email} className="card w-full h-full bg-base-100 shadow-xl image-full">
-            <figure>
-              <img
-                src={currentCard.imageUrl || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
-                alt={`${currentCard.firstName} ${currentCard.lastName}`}
-                className="w-full h-full object-cover"
-              />
-            </figure>
-            <div className="card-body p-6 flex flex-col justify-end text-white">
-              <h2 className="card-title text-3xl">{`${currentCard.firstName} ${currentCard.lastName}`}</h2>
-              <p className="text-lg">{currentCard.email}</p>
-              <div className="mt-2 mb-4">
-                <h3 className="font-semibold text-xl">About:</h3>
-                <p className="text-sm opacity-90">
-                  {currentCard.about || "No bio available. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
-                </p>
-              </div>
-              <div className="card-actions justify-center space-x-4 mt-auto">
-                <button 
-                  onClick={handleInterested}
-                  className="btn btn-primary btn-lg"
-                  disabled={interestedDisabled}
-                >
-                  Interested
-                </button>
-              </div>
+          <div key={currentCard.email} className="w-full h-full bg-black rounded-2xl shadow-2xl flex flex-col items-center justify-center p-8">
+            <img
+              src={currentCard.imageUrl || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
+              alt={`${currentCard.firstName} ${currentCard.lastName}`}
+              className="w-32 h-32 rounded-full object-cover border-4 border-blue-200 shadow mb-4"
+            />
+            <h2 className="text-2xl font-bold text-white mb-1 text-center">{`${currentCard.firstName} ${currentCard.lastName}`}</h2>
+            <p className="text-base text-white mb-2 text-center">{currentCard.email}</p>
+            <div className="mb-4 w-full">
+              <h3 className="font-semibold text-lg text-white">About:</h3>
+              <p className="text-sm text-white">
+                {currentCard.about || "No information provided."}
+              </p>
             </div>
+            <button 
+              onClick={handleInterested}
+              className="btn btn-primary btn-lg w-full mt-2"
+              disabled={interestedDisabled}
+            >
+              Interested
+            </button>
           </div>
         )}
       </div>
