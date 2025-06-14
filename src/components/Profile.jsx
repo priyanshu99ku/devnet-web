@@ -44,7 +44,7 @@ function Profile() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="loading loading-spinner loading-lg text-blue-700 dark:text-white"></span>
         <p className="mt-4">Loading profile...</p>
       </div>
     );
