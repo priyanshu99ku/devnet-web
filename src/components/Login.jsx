@@ -158,12 +158,28 @@ function Login() {
           Let's build the future, one connection at a time.
         </p>
         <button
-          className="btn btn-lg btn-circle bg-green-500 hover:bg-green-600 text-white shadow-lg"
-          onClick={handleRightSwipeClick}
+          className="btn btn-lg bg-green-500 hover:bg-green-600 text-white shadow-lg px-8 py-4 text-xl font-bold rounded-full transition-all duration-200"
+          onClick={async () => {
+            try {
+              const response = await axios.post(`${API_URL}/auth/login`, {
+                email: 'elon@gmail.com',
+                password: 'Chikki1708@'
+              }, {
+                withCredentials: true
+              });
+              if (response.data && response.data.token && response.data.user) {
+                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("user", JSON.stringify(response.data.user));
+                dispatch(setUser(response.data.user));
+                dispatch(setToken(response.data.token));
+                navigate("/profile");
+              }
+            } catch (error) {
+              setErrorMessage("Guest login failed. Please try again.");
+            }
+          }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-10 h-10">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-          </svg>
+          Continue as Guest
         </button>
       </div>
 
