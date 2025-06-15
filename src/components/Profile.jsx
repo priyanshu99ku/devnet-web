@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { setUser } from '../utils/userSliece';
 import { API_URL, DEFAULT_PROFILE_PIC } from '../utils/constants';
 import axiosInstance from '../utils/axiosConfig'; // Use the configured axios instance
+import ProfileBadges from './ProfileBadges';
 
 function Profile() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
+  const connections = useSelector((state) => state.feed.connections) || [];
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -60,6 +62,7 @@ function Profile() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-neutral-focus py-10">
+      <ProfileBadges connectionCount={connections.length} />
       <div className="card w-96 bg-neutral shadow-xl">
         <figure className="px-10 pt-10">
           <img 

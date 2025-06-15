@@ -1,13 +1,11 @@
-import { useLocation } from 'react-router-dom';
+import React from 'react';
 
 function Footer() {
-  const location = useLocation();
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
   return (
-    <footer className="absolute bottom-0 left-0 w-full z-50 bg-blue-200 dark:bg-gray-900 px-8 py-4" style={{minHeight: '64px'}}>
-      <p className="text-gray-900 dark:text-white text-center w-full font-medium">
-        Copyright © {new Date().getFullYear()} - Priyanshu | All rights reserved.
-      </p>
+    <footer className="w-full bg-gray-900 text-white py-5 px-4 flex justify-center items-center border-t border-gray-800 shadow-lg">
+      <span className="text-center w-full text-sm font-medium tracking-wide">
+        &copy; {new Date().getFullYear()} Priyanshu. All rights reserved.
+      </span>
     </footer>
   );
 }

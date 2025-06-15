@@ -92,6 +92,12 @@ const ChatPage = () => {
     );
   });
 
+  // Pagination logic for user list
+  const USERS_PER_PAGE = 5;
+  const [page, setPage] = useState(1);
+  const totalPages = Math.ceil(filteredConnections.length / USERS_PER_PAGE);
+  const paginatedConnections = filteredConnections.slice((page - 1) * USERS_PER_PAGE, page * USERS_PER_PAGE);
+
   // If no userId, show search and user list
   if (!userId) {
     return (
@@ -100,7 +106,7 @@ const ChatPage = () => {
         <input
           type="text"
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={e => { setSearch(e.target.value); setPage(1); }}
           placeholder="Search your connections..."
           className="w-full max-w-md mb-6 px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
@@ -108,26 +114,48 @@ const ChatPage = () => {
           {filteredConnections.length === 0 ? (
             <p className="text-lg text-white text-center">No connections found.</p>
           ) : (
-            <ul className="space-y-4">
-              {filteredConnections.map((user) => (
-                <li
-                  key={user._id || user.id}
-                  className="flex items-center space-x-4 p-3 bg-gray-700 rounded-md shadow-sm cursor-pointer hover:bg-blue-800 transition-colors"
-                  onClick={() => setSelectedUser(user)}
+            <>
+              <ul className="space-y-4">
+                {paginatedConnections.map((user) => (
+                  <li
+                    key={user._id || user.id}
+                    className="flex items-center space-x-4 p-3 bg-gray-700 rounded-md shadow-sm cursor-pointer hover:bg-blue-800 transition-colors"
+                    onClick={() => setSelectedUser(user)}
+                  >
+                    <img
+                      src={user.photoUrl || 'https://via.placeholder.com/150'}
+                      alt={user.firstName || user.name || 'User'}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                    <div>
+                      <h3 className="text-xl font-semibold text-white">{user.firstName || user.name}</h3>
+                      {user.headline && <p className="text-gray-300">{user.headline}</p>}
+                      {user.email && <p className="text-gray-400 text-sm">{user.email}</p>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              {/* Pagination Buttons */}
+              <div className="flex items-center justify-center gap-6 mt-8">
+                <button
+                  className={`px-6 py-2 rounded-lg font-semibold border-2 transition-colors duration-200 ${page === 1 ? 'bg-transparent text-red-400 border-red-400 cursor-not-allowed' : 'bg-transparent text-red-500 border-red-500 hover:bg-red-500 hover:text-white'}`}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
                 >
-                  <img
-                    src={user.photoUrl || 'https://via.placeholder.com/150'}
-                    alt={user.firstName || user.name || 'User'}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                  <div>
-                    <h3 className="text-xl font-semibold text-white">{user.firstName || user.name}</h3>
-                    {user.headline && <p className="text-gray-300">{user.headline}</p>}
-                    {user.email && <p className="text-gray-400 text-sm">{user.email}</p>}
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  Previous
+                </button>
+                <span className="inline-block px-5 py-2 rounded-full bg-gray-800 border border-blue-400 text-blue-200 font-semibold text-base shadow-sm mx-2">
+                  Page <span className="text-blue-400 font-bold">{page}</span> <span className="opacity-70">of</span> <span className="text-blue-400 font-bold">{totalPages}</span>
+                </span>
+                <button
+                  className={`px-6 py-2 rounded-lg font-semibold border-2 transition-colors duration-200 ${page === totalPages ? 'bg-red-500 text-white border-red-500 cursor-not-allowed' : 'bg-red-500 text-white border-red-500 hover:bg-red-600'}`}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                >
+                  Next
+                </button>
+              </div>
+            </>
           )}
         </div>
         {/* User Modal */}
