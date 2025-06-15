@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useLocation, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { DEFAULT_PROFILE_PIC } from '../utils/constants';
+import { FaUserCircle, FaUsers, FaStream, FaInbox, FaSignOutAlt } from 'react-icons/fa';
+import Sidebar from './Sidebar';
 
 const ThemeToggle = () => {
   const getSystemTheme = () => window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -39,56 +41,36 @@ const ThemeToggle = () => {
 
 const NavBar = () => {
   const location = useLocation();
-  const isLoginPage = location.pathname === '/login';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
   const user = useSelector((state) => state.user.user);
-
   const profilePic = user?.photoUrl || DEFAULT_PROFILE_PIC;
 
+  if (isAuthPage) {
+    // Minimal navbar for login/signup: left-aligned Devnet brand, blue-200 background, no shadow, no rounded
+    return (
+      <div className="w-full flex items-center py-4 px-8 bg-blue-200" style={{height: '64px'}}>
+        <Link to="/" className="text-2xl font-bold text-gray-900 dark:text-gray-800 tracking-wide">Devnet</Link>
+      </div>
+    );
+  }
+
   return (
-    <div className="navbar bg-blue-200 dark:bg-gray-900 shadow-md w-full px-8 flex justify-between items-center transition-colors duration-300">
-      <div className="flex items-center gap-4">
-        <a className="text-2xl font-bold text--color-base-content">Devnet</a>
+    <>
+      {/* Top Navbar always visible */}
+      <div className="navbar bg-blue-200 dark:bg-gray-900 shadow-md w-full px-8 flex justify-between items-center transition-colors duration-300 fixed top-0 left-0 z-50" style={{height: '64px'}}>
+        <div className="flex items-center gap-4">
+          <Link to="/" className="text-2xl font-bold text-gray-900 dark:text-white">Devnet</Link>
+        </div>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+        </div>
       </div>
-      <div className="flex items-center gap-4">
-        <ThemeToggle />
-        {!isLoginPage && (
-          <div className="dropdown dropdown-end mx-3.5">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-              <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                <img
-                  alt="User profile picture"
-                  src={profilePic}
-                />
-              </div>
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-white text-gray-900 dark:bg-gray-900 dark:text-white rounded-xl z-10 mt-3 w-56 p-3 shadow-lg border border-gray-200 dark:border-gray-700 transition-colors duration-300"
-            >
-              <li>
-                <Link to="/profile" className="px-3 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-800 font-medium transition-colors">
-                  Profile
-                </Link>
-              </li>
-              <li>
-                <Link to="/connections" className="px-3 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-800 font-medium transition-colors">Connection Page</Link>
-              </li>
-              <li>
-                <Link to="/feed" className="px-3 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-800 font-medium transition-colors">Feed page</Link>
-              </li>
-              <li>
-                <Link to="/received-requests" className="px-3 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-800 font-medium transition-colors">Request Feed</Link>
-              </li>
-              <div className="my-2 border-t border-gray-200 dark:border-gray-700"></div>
-              <li>
-                <Link to="/logout" className="px-3 py-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400 font-medium transition-colors">Logout</Link>
-              </li>
-            </ul>
-          </div>
-        )}
-      </div>
-    </div>
-  )
+      {/* Sidebar only on non-auth pages */}
+      <Sidebar user={user} profilePic={profilePic} />
+      {/* Spacer for navbar height */}
+      <div style={{height: '64px'}}></div>
+    </>
+  );
 }
 
 export default NavBar

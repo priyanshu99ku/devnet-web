@@ -57,6 +57,7 @@ function App() {
           <Route path="feed" element={<FeedPage />} />
           <Route path="connections" element={<ConnectionPage />} />
           <Route path="received-requests" element={<ReceivedRequests />} />
+          <Route path="chat" element={<ChatPage />} />
           <Route path="chat/:userId" element={<ChatPage />} />
         </Route>
         <Route path="/logout" element={<Logout />} />
