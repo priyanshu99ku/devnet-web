@@ -4,10 +4,10 @@ function Footer() {
   const location = useLocation();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
   return (
-    <footer className="footer sm:footer-horizontal footer-center bg-blue-200 text-base-content p-4 fixed bottom-0 left-0 right-0 z-40 w-full">
-      <aside className="w-full flex justify-center">
-        <p className="text-gray-900">Copyright © {new Date().getFullYear()} - Priyanshu | All rights reserved.</p>
-      </aside>
+    <footer className="absolute bottom-0 left-0 w-full z-50 bg-blue-200 dark:bg-gray-900 px-8 py-4" style={{minHeight: '64px'}}>
+      <p className="text-gray-900 dark:text-white text-center w-full font-medium">
+        Copyright © {new Date().getFullYear()} - Priyanshu | All rights reserved.
+      </p>
     </footer>
   );
 }

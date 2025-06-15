@@ -13,7 +13,7 @@ const Sidebar = ({ user, profilePic }) => {
   ];
 
   return (
-    <aside className="h-screen w-56 bg-white dark:bg-gray-900 shadow-lg flex flex-col justify-between pt-24 pb-24 px-4 fixed left-0 top-0 z-40 overflow-y-auto">
+    <aside className="h-screen w-56 bg-white dark:bg-gray-900 shadow-lg flex flex-col justify-between pt-24 pb-24 px-4 fixed left-0 top-0 z-30 overflow-y-auto">
       <nav className="flex flex-col gap-2 mt-2">
         {navLinks.map(link => (
           <Link

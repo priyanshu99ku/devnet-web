@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import axiosInstance from '../utils/axiosConfig';
 import { API_URL } from '../utils/constants';
 import { FaArrowLeft } from 'react-icons/fa';
+import socket from '../utils/socket';
 
 const DEMO_USERS = [
   {
@@ -30,6 +31,22 @@ const ChatPage = () => {
   let connections = useSelector((state) => state.feed.connections) || [];
   if (connections.length === 0) connections = DEMO_USERS;
 
+  // Socket.io integration
+  useEffect(() => {
+    if (userId && currentUser) {
+      socket.connect();
+      socket.emit('joinRoom', { userId: currentUser._id, chatWith: userId });
+      socket.on('message', (msg) => {
+        setMessages((prev) => [...prev, msg]);
+      });
+      return () => {
+        socket.emit('leaveRoom', { userId: currentUser._id, chatWith: userId });
+        socket.off('message');
+        socket.disconnect();
+      };
+    }
+  }, [userId, currentUser]);
+
   // Fetch chat user if userId is present
   useEffect(() => {
     if (userId) {
@@ -54,6 +71,13 @@ const ChatPage = () => {
       };
       setMessages([...messages, message]);
       setNewMessage('');
+      if (userId && currentUser) {
+        socket.emit('message', {
+          userId: currentUser.id || currentUser._id,
+          chatWith: userId,
+          text: newMessage
+        });
+      }
     } catch (error) {
       // handle error
     }
@@ -174,8 +198,8 @@ const ChatPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-[#101624] via-[#1a2233] to-[#2563eb] items-center justify-center">
-      <div className="flex flex-col max-w-2xl w-full mx-auto bg-[#181f2e] rounded-2xl shadow-2xl overflow-hidden border border-blue-900" style={{minHeight: '70vh'}}>
+    <div className="flex flex-col bg-gradient-to-br from-[#101624] via-[#1a2233] to-[#2563eb] items-center justify-center w-full" style={{minHeight: 'calc(100vh - 64px)'}}>
+      <div className="flex flex-col max-w-2xl w-full mx-auto bg-[#181f2e] rounded-2xl shadow-2xl overflow-hidden border border-blue-900 flex-1 mb-20" style={{height: 'calc(100vh - 64px - 64px)'}}>
         {/* Chat Header */}
         <div className="sticky top-0 z-10 bg-[#181f2e] p-4 flex items-center border-b border-blue-900 shadow-sm">
           <button
@@ -227,7 +251,7 @@ const ChatPage = () => {
         </div>
 
         {/* Message Input */}
-        <form onSubmit={handleSendMessage} className="p-4 bg-[#181f2e] border-t border-blue-900 flex items-center" style={{position: 'relative', zIndex: 1}}>
+        <form onSubmit={handleSendMessage} className="p-4 bg-[#181f2e] border-t border-blue-900 flex items-center" style={{position: 'sticky', bottom: 0, zIndex: 2}}>
           <input
             type="text"
             value={newMessage}
