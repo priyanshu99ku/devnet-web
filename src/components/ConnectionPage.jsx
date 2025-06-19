@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setConnections } from '../utils/feedslice';
 import { useNavigate } from 'react-router-dom';
 
+// This page shows all of my connections.
 const ConnectionPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -15,12 +16,15 @@ const ConnectionPage = () => {
   const USERS_PER_PAGE = 5;
   const [selectedUser, setSelectedUser] = useState(null);
 
+  // I'm fetching my connections here when the component loads.
+  // I only fetch if the connections aren't already in my Redux store.
   useEffect(() => {
     if (connections.length === 0) {
       const fetchConnections = async () => {
         try {
           const response = await axiosInstance.get(`${API_URL}/request/all-connections`);
           const data = response.data.users || [];
+          // Once I get the data, I store it in Redux.
           dispatch(setConnections(data));
         } catch (err) {
           setError(err.response?.data?.message || err.response?.data?.msg || 'Failed to fetch connections');
@@ -34,6 +38,7 @@ const ConnectionPage = () => {
     }
   }, [connections, dispatch]);
 
+  // While the data is loading, I show a spinner.
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -42,6 +47,7 @@ const ConnectionPage = () => {
     );
   }
 
+    // If something goes wrong with the fetch, I display an error message.
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100 text-red-500">
@@ -78,6 +84,7 @@ const ConnectionPage = () => {
                 </li>
               ))}
             </ul>
+                        {/* Here are the pagination buttons to navigate through my connections. */}
             <div className="flex justify-between mt-6">
               <button
                 className={`btn px-6 py-2 font-semibold rounded-md transition-colors duration-200 
@@ -97,6 +104,7 @@ const ConnectionPage = () => {
                 Next
               </button>
             </div>
+                        {/* When I click on a user, a modal with their details will pop up. */}
             {/* User Modal (overlay only content area, not navbar/footer) */}
             {selectedUser && (
               <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

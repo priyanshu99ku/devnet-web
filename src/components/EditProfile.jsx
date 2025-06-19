@@ -5,6 +5,7 @@ import { setUser } from '../utils/userSliece';
 import { API_URL, DEFAULT_PROFILE_PIC } from '../utils/constants';
 import axiosInstance from '../utils/axiosConfig';
 
+// This is where I handle editing the user's profile.
 function EditProfile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ function EditProfile() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
+  // When the component loads, I populate the form with the current user's data from Redux.
   useEffect(() => {
     if (currentUser) {
       setFirstName(currentUser.firstName || "");
@@ -29,16 +31,19 @@ function EditProfile() {
       setAbout(currentUser.about || "");
       setAge(currentUser.age || "");
       setGender(currentUser.gender || "");
+      // My skills are stored as an array, so I join them into a string for the input field.
       setSkills(currentUser.skills ? currentUser.skills.join(', ') : "");
     }
   }, [currentUser]);
 
+  // This function handles the form submission when I want to update my profile.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     setSuccess(null);
 
+    // I'm converting the comma-separated skills string back into an array.
     const updatedSkills = skills.split(',').map(s => s.trim()).filter(s => s.length > 0);
 
     const updatedProfile = {
@@ -49,8 +54,8 @@ function EditProfile() {
       age: age ? Number(age) : undefined,
       gender: gender || undefined,
       skills: updatedSkills,
-      userId: currentUser._id, // Add userId for backend validation
-      email: currentUser.email // Add email field
+      userId: currentUser._id, // I need to send my user ID for the backend to know who to update.
+      email: currentUser.email // And my email too.
     };
 
     try {
@@ -59,9 +64,10 @@ function EditProfile() {
       });
       
       if (response.data.success) {
-        dispatch(setUser(response.data.user)); // Update Redux state with new user data
+        // If the update is successful, I update my user data in Redux.
+        dispatch(setUser(response.data.user));
         setSuccess("Profile updated successfully!");
-        // Navigate back to profile page after a delay
+        // Then I navigate back to my profile page after a short delay.
         setTimeout(() => {
           navigate('/profile');
         }, 1500);
@@ -69,10 +75,10 @@ function EditProfile() {
     } catch (err) {
       console.error("Error updating profile:", err);
       if (err.response?.data?.errors) {
-        // Handle validation errors
+        // I'm handling validation errors from the backend here.
         setError(err.response.data.errors.join(', '));
       } else if (err.response?.data?.msg) {
-        // Handle other error messages
+        // And other types of error messages.
         setError(err.response.data.msg);
       } else {
         setError("Failed to update profile. Please try again.");

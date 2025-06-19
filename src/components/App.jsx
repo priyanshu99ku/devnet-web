@@ -14,9 +14,11 @@ import ChatPage from "./ChatPage";
 import axios from 'axios';
 import { API_URL } from '../utils/constants';
 
+// This is the main component of my app. It handles routing and initial authentication.
 function App() {
   const dispatch = useDispatch();
 
+  // On component mount, I check if there's a token in localStorage to keep the user logged in.
   useEffect(() => {
     const initialAuthCheck = async () => {
       const token = localStorage.getItem('token');
@@ -32,12 +34,12 @@ function App() {
           },
         });
         dispatch(setUser(response.data));
-        dispatch(setToken(token)); // Ensure token is also set in Redux state
+        dispatch(setToken(token)); // I'm making sure the token is also set in my Redux state.
       } catch (error) {
         if (error.response?.status === 401) {
           dispatch(logout());
-          localStorage.removeItem('token'); // Clear token from localStorage on 401
-          localStorage.removeItem('user'); // Clear user from localStorage on 401
+          localStorage.removeItem('token'); // If auth fails, I clear the token from localStorage.
+          localStorage.removeItem('user'); // And the user data too.
         }
         console.error("Initial authentication check failed:", error);
       }

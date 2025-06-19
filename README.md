@@ -1,12 +1,54 @@
-# React + Vite
+# DevNet: A Social Networking Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Welcome to DevNet! This is a social networking application I built to connect with other developers, share ideas, and chat in real-time.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+-   **Authentication:** Secure user login and registration.
+-   **User Profiles:** Create and customize your developer profile.
+-   **News Feed:** Stay updated with posts from your connections.
+-   **Connections:** Build your network by sending and accepting connection requests.
+-   **Real-time Chat:** Chat with your connections instantly.
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+This project is built with a modern and powerful tech stack:
+
+-   **Frontend:** [React](https://reactjs.org/)
+-   **Build Tool:** [Vite](https://vitejs.dev/)
+-   **State Management:** [Redux Toolkit](https://redux-toolkit.js.org/)
+-   **Routing:** [React Router](https://reactrouter.com/)
+-   **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+-   **API Calls:** [Axios](https://axios-http.com/)
+
+## 🚀 Getting Started
+
+Follow these steps to get the project up and running on your local machine.
+
+### Prerequisites
+
+Make sure you have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
+
+### Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/priyanshu99ku/devnet-web.git
+    cd devnet-web
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+3.  **Start the development server:**
+    ```bash
+    npm run dev
+    ```
+
+The application will be running at `http://localhost:5173` (or another port if 5173 is busy).
+
+## 🤝 Contributing
+
+I'm always looking to improve DevNet. If you have any ideas or find any bugs, feel free to open an issue or submit a pull request.

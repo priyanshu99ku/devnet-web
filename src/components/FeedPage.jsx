@@ -4,6 +4,7 @@ import { setFeed, setLoading, setError } from '../utils/feedslice';
 import { FEED_API, API_URL } from '../utils/constants';
 import axiosInstance from '../utils/axiosConfig';
 
+// This is my main feed page, where I can discover other developers.
 const FeedPage = () => {
   const dispatch = useDispatch();
   const { feed, loading, error } = useSelector((state) => state.feed);
@@ -11,11 +12,13 @@ const FeedPage = () => {
   const [errorState, setErrorState] = useState(null);
   const [interestedDisabled, setInterestedDisabled] = useState(false);
 
+  // I'm fetching the list of users for my feed when the component loads.
   useEffect(() => {
     const fetchFeed = async () => {
       dispatch(setLoading(true));
       try {
         const response = await axiosInstance.get(FEED_API);
+        // I store the fetched users in my Redux state.
         dispatch(setFeed(response.data.users));
       } catch (err) {
         dispatch(setError(err.message));
@@ -29,17 +32,20 @@ const FeedPage = () => {
     setInterestedDisabled(false);
   }, [currentCardIndex]);
 
+  // These functions let me cycle through the user cards.
   const handleNextCard = () => {
     setCurrentCardIndex((prevIndex) => (prevIndex + 1) % feed.length);
   };
 
+  // I'm navigating to the previous card in the feed.
   const handlePrevCard = () => {
     setCurrentCardIndex((prevIndex) => (prevIndex - 1 + feed.length) % feed.length);
   };
 
+  // When I click 'Interested', I send a request to the backend to register my interest in this user.
   const handleInterested = async () => {
     const userId = feed[currentCardIndex]._id || feed[currentCardIndex].id;
-    setInterestedDisabled(true);
+    setInterestedDisabled(true); // I disable the button to prevent multiple clicks.
     console.log('Sending interested request for userId:', userId);
     try {
       const response = await axiosInstance.post(`${API_URL}/request/sendInterestedUser`, {
@@ -53,10 +59,12 @@ const FeedPage = () => {
     }
   };
 
+  // I'm showing different messages depending on the state of the feed.
   if (loading) return <div className="text-center text-xl font-bold py-10">Loading Users...</div>;
   if (error) return <div className="text-center text-red-500 text-xl font-bold py-10">Error: {error}</div>;
   if (!feed || feed.length === 0) return <div className="text-center text-gray-500 text-xl font-bold py-10">No users to show.</div>;
 
+    // This gets the user data for the card that's currently visible.
   const currentCard = feed[currentCardIndex];
 
   return (

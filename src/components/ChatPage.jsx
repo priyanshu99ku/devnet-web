@@ -6,6 +6,7 @@ import { API_URL } from '../utils/constants';
 import { FaArrowLeft } from 'react-icons/fa';
 import socket from '../utils/socket';
 
+// I've put a demo user here for testing the UI when I don't have real connection data.
 const DEMO_USERS = [
   {
     _id: 'demo1',
@@ -19,6 +20,7 @@ const DEMO_USERS = [
   },
 ];
 
+// This is where all the real-time chat magic happens.
 const ChatPage = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
@@ -31,14 +33,19 @@ const ChatPage = () => {
   let connections = useSelector((state) => state.feed.connections) || [];
   if (connections.length === 0) connections = DEMO_USERS;
 
-  // Socket.io integration
+  // I'm using this effect to handle all my Socket.io logic.
   useEffect(() => {
     if (userId && currentUser) {
+      // Connecting to the server and joining a specific chat room.
       socket.connect();
       socket.emit('joinRoom', { userId: currentUser._id, chatWith: userId });
+
+      // Listening for new messages from the server.
       socket.on('message', (msg) => {
         setMessages((prev) => [...prev, msg]);
       });
+
+      // Cleaning up when the component unmounts or the user changes.
       return () => {
         socket.emit('leaveRoom', { userId: currentUser._id, chatWith: userId });
         socket.off('message');
@@ -47,22 +54,28 @@ const ChatPage = () => {
     }
   }, [userId, currentUser]);
 
-  // Fetch chat user if userId is present
+  // This effect fetches the details of the person I'm chatting with.
   useEffect(() => {
     if (userId) {
-      // For demo, use demo user if not found
+      // I'm looking for the user in my connections list.
       const found = connections.find(u => u._id === userId);
-      if (found) setChatUser(found);
-      else setChatUser(DEMO_USERS[0]);
+      if (found) {
+        setChatUser(found);
+      } else {
+        // If not found, I'll just use my demo user for now.
+        setChatUser(DEMO_USERS[0]);
+      }
     } else {
       setChatUser(null);
     }
   }, [userId, connections]);
 
+  // This function handles sending a new message.
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim()) return; // Don't send empty messages.
     try {
+      // I'm creating the message object locally for an optimistic UI update.
       const message = {
         id: Date.now(),
         text: newMessage,
@@ -71,6 +84,7 @@ const ChatPage = () => {
       };
       setMessages([...messages, message]);
       setNewMessage('');
+      // Then, I send the message to the server via socket.
       if (userId && currentUser) {
         socket.emit('message', {
           userId: currentUser.id || currentUser._id,
@@ -79,11 +93,12 @@ const ChatPage = () => {
         });
       }
     } catch (error) {
-      // handle error
+      // I should probably handle this error better.
+      console.error("Failed to send message:", error);
     }
   };
 
-  // Filter connections by search
+  // I've implemented a search feature to easily find my connections.
   const filteredConnections = connections.filter(user => {
     const name = `${user.firstName || ''} ${user.lastName || ''}`.toLowerCase();
     const email = (user.email || '').toLowerCase();
@@ -92,7 +107,7 @@ const ChatPage = () => {
     );
   });
 
-  // Pagination logic for user list
+  // And here's some pagination for my connections list to keep it tidy.
   const USERS_PER_PAGE = 5;
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(filteredConnections.length / USERS_PER_PAGE);
