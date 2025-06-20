@@ -20,32 +20,46 @@ function App() {
 
   // On component mount, I check if there's a token in localStorage to keep the user logged in.
   useEffect(() => {
-    const initialAuthCheck = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        dispatch(logout());
-        return;
-      }
-      try {
-        const response = await axios.get(`${API_URL}/user`, {
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        dispatch(setUser(response.data));
-        dispatch(setToken(token)); // I'm making sure the token is also set in my Redux state.
-      } catch (error) {
-        if (error.response?.status === 401) {
-          dispatch(logout());
-          localStorage.removeItem('token'); // If auth fails, I clear the token from localStorage.
-          localStorage.removeItem('user'); // And the user data too.
-        }
-        console.error("Initial authentication check failed:", error);
-      }
-    };
+    const token = localStorage.getItem('token');
+    const userString = localStorage.getItem('user');
 
-    initialAuthCheck();
+    if (token && userString) {
+      try {
+        const user = JSON.parse(userString);
+        // Optimistically set the user as authenticated from localStorage
+        dispatch(setUser(user));
+        dispatch(setToken(token));
+
+        // Asynchronously re-validate the token with the server
+        const revalidateToken = async () => {
+          try {
+            const response = await axios.get(`${API_URL}/user`, {
+              withCredentials: true,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            // Update user data with fresh data from the server
+            const freshUser = response.data;
+            dispatch(setUser(freshUser));
+            localStorage.setItem('user', JSON.stringify(freshUser));
+          } catch (error) {
+            if (error.response?.status === 401) {
+              // Token is invalid, log the user out
+              dispatch(logout());
+            }
+            console.error("Token revalidation failed:", error);
+          }
+        };
+        revalidateToken();
+      } catch (error) {
+        console.error("Failed to parse user data from localStorage", error);
+        dispatch(logout());
+      }
+    } else {
+      // If no token/user in localStorage, ensure we are logged out.
+      dispatch(logout());
+    }
   }, [dispatch]);
 
   return (

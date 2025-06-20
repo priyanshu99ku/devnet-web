@@ -9,6 +9,7 @@ function Login() {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false);
   const [showSignInPopup, setShowSignInPopup] = useState(false);
   const name = useRef(null);
   const email = useRef(null);
@@ -129,10 +130,10 @@ function Login() {
           {errorMessage && <p className="text-sm text-red-500 mt-2">{errorMessage}</p>}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || guestLoading}
             className="btn w-full mt-8 bg-violet-600 hover:bg-violet-700 border-violet-600"
           >
-            {loading ? "Loading..." : (isSignInForm ? "Sign In" : "Sign up")}
+            {loading ? <span className="loading loading-spinner"></span> : (isSignInForm ? "Sign In" : "Sign up")}
           </button>
           <p className="py-4 cursor-pointer hover:underline text-center text-white" onClick={toggleSignInForm}>
             {isSignInForm
@@ -159,7 +160,10 @@ function Login() {
         </p>
         <button
           className="btn btn-lg bg-green-500 hover:bg-green-600 text-white shadow-lg px-8 py-4 text-xl font-bold rounded-full transition-all duration-200"
+          disabled={loading || guestLoading}
           onClick={async () => {
+            setGuestLoading(true);
+            setErrorMessage("");
             try {
               const response = await axios.post(`${API_URL}/auth/login`, {
                 email: 'elon@gmail.com',
@@ -176,10 +180,12 @@ function Login() {
               }
             } catch (error) {
               setErrorMessage("Guest login failed. Please try again.");
+            } finally {
+              setGuestLoading(false);
             }
           }}
         >
-          Continue as Guest
+          {guestLoading ? <span className="loading loading-spinner"></span> : "Continue as Guest"}
         </button>
       </div>
 
